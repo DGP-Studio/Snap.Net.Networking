@@ -13,7 +13,10 @@ namespace Snap.Net.Networking
             {
                 if (e.IsAvailable)
                 {
-                    networkConnected.Set();
+                    if (Pinger.TestIP("8.8.8.8"))
+                    {
+                        networkConnected.Set();
+                    }
                 }
             };
         }
@@ -25,7 +28,14 @@ namespace Snap.Net.Networking
         {
             if (NetworkInterface.GetIsNetworkAvailable())
             {
-                return;
+                if (Pinger.TestIP("8.8.8.8"))
+                {
+                    return;
+                }
+                else
+                {
+                    networkConnected.Reset();
+                }
             }
             else
             {
