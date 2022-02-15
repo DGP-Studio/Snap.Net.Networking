@@ -1,5 +1,4 @@
 ﻿using Snap.Core.Logging;
-using System.ComponentModel;
 using System.Net.NetworkInformation;
 using System.Text;
 
@@ -18,7 +17,7 @@ namespace Snap.Net.Networking
                 Logger.LogStatic("Ping End");
                 return reply.Status == IPStatus.Success;
             }
-            catch (Win32Exception)
+            catch
             {
                 return false;
             }
