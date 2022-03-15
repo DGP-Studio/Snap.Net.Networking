@@ -6,14 +6,14 @@ namespace Snap.Net.Networking
 {
     public static class Network
     {
-        private const string GoogleDNS = "8.8.8.8";
+        private const string ApiTakumi = "api-takumi.mihoyo.com";
         private static readonly ManualResetEvent networkConnected = new(true);
 
         static Network()
         {
             NetworkChange.NetworkAddressChanged += (s, e) =>
             {
-                if (Pinger.TestIP(GoogleDNS))
+                if (Pinger.TestIP(ApiTakumi))
                 {
                     networkConnected.Set();
                 }
@@ -22,7 +22,7 @@ namespace Snap.Net.Networking
             {
                 if (e.IsAvailable)
                 {
-                    if (Pinger.TestIP(GoogleDNS))
+                    if (Pinger.TestIP(ApiTakumi))
                     {
                         networkConnected.Set();
                     }
@@ -37,7 +37,7 @@ namespace Snap.Net.Networking
         {
             if (NetworkInterface.GetIsNetworkAvailable())
             {
-                if (Pinger.TestIP(GoogleDNS))
+                if (Pinger.TestIP(ApiTakumi))
                 {
                     return;
                 }
