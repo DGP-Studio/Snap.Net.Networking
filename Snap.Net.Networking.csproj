@@ -24,8 +24,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Snap.Core.Logging\Snap.Core.Logging.csproj" />
-  </ItemGroup>
-
 </Project>
