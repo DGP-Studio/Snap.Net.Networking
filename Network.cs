@@ -23,14 +23,7 @@ namespace Snap.Net.Networking
             NetworkChange.NetworkAddressChanged += HandleNetworkAddressChanged;
             NetworkChange.NetworkAvailabilityChanged += HandleNetworkAvailabilityChanged;
 
-            if (NetworkInterface.GetIsNetworkAvailable())
-            {
-                if (!Pinger.Test(ApiTakumi))
-                {
-                    NetworkConnected.Reset();
-                }
-            }
-            else
+            if (!(NetworkInterface.GetIsNetworkAvailable() && Pinger.Test(ApiTakumi)))
             {
                 NetworkConnected.Reset();
             }
