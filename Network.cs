@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.Threading;
+using System;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace Snap.Net.Networking
     /// 网络状态
     /// 仅针对米哈游服务器检测
     /// </summary>
+    [Obsolete("检查网络连接不再使用此类")]
     public static class Network
     {
         private const string ApiTakumi = "api-takumi.mihoyo.com";
@@ -23,15 +25,46 @@ namespace Snap.Net.Networking
             NetworkChange.NetworkAddressChanged += HandleNetworkAddressChanged;
             NetworkChange.NetworkAvailabilityChanged += HandleNetworkAvailabilityChanged;
 
-            if (!(NetworkInterface.GetIsNetworkAvailable() && Pinger.Test(ApiTakumi)))
-            {
-                NetworkConnected.Reset();
-            }
+            // first init
+            TrySetNetworkConnected();
 
+            // continious work
+            TryWaitNetworkConnectionAsync().Forget();
+
+            // wait for connection
             await Task.Run(() => NetworkConnected.WaitOne());
 
             NetworkChange.NetworkAddressChanged -= HandleNetworkAddressChanged;
             NetworkChange.NetworkAvailabilityChanged -= HandleNetworkAvailabilityChanged;
+        }
+
+        private static async Task TryWaitNetworkConnectionAsync()
+        {
+            while (!TrySetNetworkConnected())
+            {
+                await Task.Delay(2000);
+            }
+        }
+
+        /// <summary>
+        /// 尝试设置网络状态
+        /// </summary>
+        /// <returns>是否设置成功</returns>
+        private static bool TrySetNetworkConnected()
+        {
+            if (NetworkInterface.GetIsNetworkAvailable())
+            {
+                if (Pinger.Test(ApiTakumi))
+                {
+                    return NetworkConnected.Set();
+                }
+                else
+                {
+                    return NetworkConnected.Reset();
+                }
+            }
+
+            return false;
         }
 
         private static void HandleNetworkAddressChanged(object? s, EventArgs e)

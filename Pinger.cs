@@ -1,4 +1,5 @@
-﻿using System.Net.NetworkInformation;
+﻿using System;
+using System.Net.NetworkInformation;
 using System.Text;
 
 namespace Snap.Net.Networking
@@ -6,6 +7,7 @@ namespace Snap.Net.Networking
     /// <summary>
     /// Ping
     /// </summary>
+    [Obsolete("检查网络连接不再使用此类")]
     public static class Pinger
     {
         /// <summary>
@@ -19,7 +21,8 @@ namespace Snap.Net.Networking
             PingOptions options = new() { DontFragment = true };
             try
             {
-                PingReply reply = new Ping().Send(host, 120, buffer, options);
+                // enlarge timeout to fix blocking issue.
+                PingReply reply = new Ping().Send(host, 10000, buffer, options);
                 return reply.Status == IPStatus.Success;
             }
             catch
